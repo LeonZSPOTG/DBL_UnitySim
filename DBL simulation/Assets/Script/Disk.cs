@@ -10,7 +10,7 @@ public class Disk : MonoBehaviour
     public float fixSpeed = 2;
 
     private Rigidbody rb;
-    private bool canExit = true;
+    private float counter;
 
     void Start()
     {
@@ -37,20 +37,19 @@ public class Disk : MonoBehaviour
         }
     }
 
-    private void ResetCanExit()
-    {
-        canExit = true;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         conveyorBelt = other.gameObject.GetComponent<ConveyorBelt>();
-        canExit = false;
-        Invoke("ResetCanExit", 1f);
+        counter++;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if(canExit) conveyorBelt = null;
+        counter--;
+        if (counter <= 0)
+        {
+            conveyorBelt = null;
+            counter = 0;
+        }
     }
 }
