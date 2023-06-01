@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Disk : MonoBehaviour
 {
-    public LayerMask conveyorLayer;
-    public float raycastDistance;
     public ConveyorBelt conveyorBelt;
 
+    public float fixThreshold = 0.1f;
+    public float fixSpeed = 2;
+
     private Rigidbody rb;
+    private bool canExit = true;
 
     void Start()
     {
@@ -17,21 +19,38 @@ public class Disk : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, conveyorLayer))
-        {
-            conveyorBelt = hit.collider.gameObject.GetComponent<ConveyorBelt>();
-        }
-
         if (conveyorBelt) 
         {
-            rb.MovePosition(transform.position + conveyorBelt.direction * conveyorBelt.speed * Time.deltaTime);
+            Vector3 movement = Vector3.zero;
+            movement += conveyorBelt.direction * conveyorBelt.speed;
+
+            Vector3 perpendicular = Vector3.Cross(conveyorBelt.direction, Vector3.up).normalized;
+            Vector3 fix = Vector3.Project(conveyorBelt.transform.position - transform.position, perpendicular);
+            if (fix.magnitude > fixThreshold)
+            {
+                movement += fix.normalized * fixSpeed;
+                rb.MovePosition(transform.position + movement * Time.deltaTime);
+            }
+            else {
+                rb.MovePosition(transform.position + movement * Time.deltaTime + fix);
+            }
         }
     }
 
-    private void OnDrawGizmos()
+    private void ResetCanExit()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * raycastDistance);
+        canExit = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        conveyorBelt = other.gameObject.GetComponent<ConveyorBelt>();
+        canExit = false;
+        Invoke("ResetCanExit", 1f);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(canExit) conveyorBelt = null;
     }
 }
