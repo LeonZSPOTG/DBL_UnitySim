@@ -359,7 +359,10 @@
 "Assets/Script/Conveyor/CoveyorBelt.cs"
 "Assets/Script/Conveyor/Disk.cs"
 "Assets/Script/Conveyor/DrawArrow.cs"
+"Assets/Script/Conveyor/Physically_Accurate_Conveyor.cs"
+"Assets/Script/Disk Detection.cs"
 "Assets/Script/Pusher/Push.cs"
+"Assets/Script/Sweeper/Sweeper Gate.cs"
 -langversion:9.0
 
 /deterministic

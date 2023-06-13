@@ -19,6 +19,6 @@ public class Push : MonoBehaviour
         {
             transform.Translate(-(speed * target * Time.deltaTime));
         }
-
+        
     }
 }
